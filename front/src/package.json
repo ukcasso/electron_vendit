@@ -1,0 +1,17 @@
+{
+  "name": "vendit",
+  "productName": "Vendit Management Program",
+  "version": "1.0.0",
+  "description": "Vendit Management Program",
+  "main": "./main.prod.js",
+  "author": {
+    "name": "vendit",
+    "email": "jinuk@vendit.co.kr"
+  },
+  "scripts": {
+    "electron-rebuild": "node -r ../.erb/scripts/BabelRegister.js ../.erb/scripts/ElectronRebuild.js",
+    "postinstall": "yarn electron-rebuild"
+  },
+  "license": "MIT",
+  "dependencies": {}
+}
