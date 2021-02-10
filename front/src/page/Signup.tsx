@@ -86,7 +86,7 @@ function Signup() {
     if(error) {
       return alert("정보 확인바람")
     }
-    history.push("/signin");
+    // history.push("/signin");
     }
 
 

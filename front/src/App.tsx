@@ -7,6 +7,7 @@ import './App.global.css';
 import Home from './page/Home';
 import Signin from './page/Signin';
 import Signup from './page/Signup';
+import Dashboard from './page/Dashboard';
 
 
 
@@ -29,14 +30,21 @@ export default function App() {
         null,
         { headers: { "x-auth-token": token }});
       console.log(tokenRes.data) // 토큰없을 시 false
-      // if(tokenRes) {
-      //   setUserData({
-      //     token
-      //   })
-      // }
-    
+      if(tokenRes) {
+        const userRes = await Axios.post(
+          "http://localhost:3030/emailIsVaild", 
+          null, 
+          {headers: { "x-auth-token": token }});
+        console.log("userRes", userRes)
+        setUserData({
+            token,
+            user: userRes.data
+          }
+        )
+      }
     }
     checkLoggedIn();
+    console.log("userData", userData)
   }, [])
 
   return (
@@ -46,6 +54,12 @@ export default function App() {
           <Route path="/" component={Home} exact/>
           <Route path="/signin" component={Signin}/>
           <Route path="/signup" component={Signup}/>
+          {userData 
+          ? 
+          <Route path="/dashboard" component={Dashboard}/>
+          :
+          null
+          }
         </Switch>
       </Router>
     </UserContext.Provider>
