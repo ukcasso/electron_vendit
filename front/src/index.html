@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <title>Hello Electron React!</title>
+    <title>VENDIT</title>
     <script>
       (() => {
         if (process?.env?.NODE_ENV !== 'development') {
@@ -26,7 +26,7 @@
         scripts.push('../.erb/dll/renderer.dev.dll.js');
 
         // Dynamically insert the bundled app script in the renderer process
-        const port = process.env.PORT || 1212;
+        const port = process.env.PORT || 3000;
         scripts.push(`http://localhost:${port}/dist/renderer.dev.js`);
       } else {
         scripts.push('./dist/renderer.prod.js');

@@ -77,6 +77,8 @@ const createWindow = async () => {
     },
   });
 
+
+
   mainWindow.loadURL(`file://${__dirname}/index.html`);
 
   // @TODO: Use 'ready-to-show' event
