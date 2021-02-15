@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import styled from 'styled-components';
+import UserContext from '../context/userContext'
+import Axios from "axios";
 import { Link } from 'react-router-dom';
 import Logo from '../image/vendit-logo-black.png';
-import { useMutation } from '@apollo/client';
-import { ADD_USER } from './common'
 import { useHistory } from "react-router-dom";
 
 const SignUpContainer = styled.div`
@@ -72,22 +72,27 @@ const StyledButton = styled.button`
 function Signup() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState();
   const [confirmpassword, setConfirmpassword] = useState('');
-  const [addUser, { loading, error }] = useMutation(ADD_USER);
+  const { setUserData } = useContext(UserContext);
   const history = useHistory();
  
 
-  const Submit = (event: { preventDefault: () => void; }) => {
-    event.preventDefault();
-    addUser({ variables: { email: email, password: password, confirmpassword: confirmpassword } });
-
-    setEmail("");
-    setPassword("");
-    if(error) {
-      return alert("정보 확인바람")
+  const submit = async (e: { preventDefault: () => void; }) => {
+    e.preventDefault();
+    try {
+      const loginUser = { email, password, confirmpassword};
+      const loginRes = await Axios.post("http://localhost:3030/api/auth/register", loginUser);
+      setUserData({
+        token: loginRes.data.token,
+        user: loginRes.data.user,
+      });
+      localStorage.setItem("user-auth-token", loginRes.data.token);
+      history.push("/login");
+    } catch (err) {
+      console.log(err)
     }
-    // history.push("/signin");
-    }
+  };
 
 
   return (
@@ -96,14 +101,13 @@ function Signup() {
       <LogoImgLink to='/'>
         <LogoImg src={Logo} />
       </LogoImgLink>
-      <form onSubmit={Submit}> 
+      <form onSubmit={submit}> 
         <StyledInput
           autoComplete="email"
           name="email"
           type="email"
           placeholder="EMAIL"
           onChange={(e) => setEmail(e.target.value)}
-          disabled={loading}
         />
         <StyledInput
           autoComplete="password"
@@ -111,7 +115,6 @@ function Signup() {
           type="password"
           placeholder="PASSWORD"
           onChange={(e) => setPassword(e.target.value)}
-          disabled={loading}
         />
         <StyledInput
           autoComplete="password"
@@ -119,12 +122,10 @@ function Signup() {
           type="password"
           placeholder="CONFIRM PASSWORD"
           onChange={(e) => setConfirmpassword(e.target.value)}
-          disabled={loading}
         />
-        <StyledButton type="submit" disabled={loading}>
+        <StyledButton type="submit" >
           SIGN UP
         </StyledButton>
-        {error && <p style={{ color: "red" }}>Error :(</p>}
       </form>
     </SignUpBox>
   </SignUpContainer>

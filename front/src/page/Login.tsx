@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import styled from 'styled-components';
 import UserContext from "../context/userContext";
+import Axios from "axios";
 import { Link } from 'react-router-dom';
-import { useMutation } from '@apollo/client';
-import { LOGIN_USER } from './common'
 import Logo from '../image/vendit-logo-black.png';
 import { useHistory } from "react-router-dom";
 
@@ -71,22 +70,26 @@ const StyledButton = styled.button`
 function Signin() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [loginUser, { loading, error }] = useMutation(LOGIN_USER);
+  const [error, setError] = useState();
   const history = useHistory();
+  const { setUserData } = useContext(UserContext);
 
 
   const Submit = async (event: { preventDefault: () => void; }) => {
     event.preventDefault();
-
     try {
-      const loginRes = await loginUser({ variables: { email: email, password: password }});
-      console.log(loginRes)
-      // setUserData(loginRes.data.loginUser);
-
-      localStorage.setItem("user-auth-token", loginRes.data.loginUser.token);
-    } catch(err) {
-        {console.log(err)}
+      const loginUser = { email, password };
+      const loginRes = await Axios.post("http://localhost:3030/api/auth/login", loginUser);
+      setUserData({
+        token: loginRes.data.token,
+        user: loginRes.data.user,
+      });
+      localStorage.setItem("user-auth-token", loginRes.data.token);
+      history.push("/");
+    } catch (err) {
+      console.log(err)
     }
+
   }
 
 
@@ -103,7 +106,6 @@ function Signin() {
               type="email"
               onChange={(e) => setEmail(e.target.value)}
               placeholder="EMAIL"
-              disabled={loading}
             />
             <StyledInput
               autoComplete="password"
@@ -111,12 +113,10 @@ function Signin() {
               type="password"
               onChange={(e) => setPassword(e.target.value)}
               placeholder="PASSWORD"
-              disabled={loading}
             />
-            <StyledButton type="submit" disabled={loading}>
+            <StyledButton type="submit">
               SIGN IN
             </StyledButton>
-            {error && <p style={{ color: "red" }}>Error :(</p>}
           </form>
         </SignInBox>
       </SignInContainer>

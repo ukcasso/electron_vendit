@@ -10,6 +10,9 @@ sequelize.define(
       type: DataTypes.STRING(100),
       allowNull: true,
     },
+    grade: {
+      type: DataTypes.STRING,
+    },
   },
   {
     timestamps: true,
